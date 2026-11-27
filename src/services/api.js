@@ -18,6 +18,6 @@ export async function api(path, options = {}) {
     error.status = response.status
     throw error
   }
-  if (response.status === 204) return null
-  return response.json()
+  const body = await response.text()
+  return body ? JSON.parse(body) : null
 }

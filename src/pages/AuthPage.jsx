@@ -47,6 +47,7 @@ export default function AuthPage({ mode, onLogin }) {
             <button className="button full" disabled={busy}>{busy ? 'Please wait…' : isRegister ? 'Create account' : 'Log in'}</button>
           </form>
           <p className="auth-switch">{isRegister ? 'Already have an account?' : 'New to Fundoo?'} <Link to={isRegister ? '/login' : '/register'}>{isRegister ? 'Log in' : 'Create account'}</Link></p>
+          {!isRegister && <p className="auth-switch"><Link to="/forgot-password">Forgot password?</Link> · <Link to="/verify">Verify email</Link></p>}
         </div>
       </div>
     </main>
