@@ -26,8 +26,10 @@ export default function TransferPage({ onAuthError }) {
       const link = document.createElement('a')
       link.href = url
       link.download = 'notes.csv'
+      document.body.append(link)
       link.click()
-      URL.revokeObjectURL(url)
+      link.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
       setError('')
     } catch (problem) { if (problem.status === 401) onAuthError(); setError(problem.message) }
     finally { setBusy(false) }
