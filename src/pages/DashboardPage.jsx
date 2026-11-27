@@ -29,6 +29,16 @@ export default function DashboardPage({ onAuthError }) {
     }).finally(() => setLoading(false))
   }, [onAuthError])
 
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      getNotes(activeSearch).then((items) => { setNotes(items); setError('') }).catch((problem) => {
+        if (problem.status === 401) onAuthError()
+        else setError(problem.message)
+      })
+    }, 30000)
+    return () => window.clearInterval(timer)
+  }, [activeSearch, onAuthError])
+
   async function save(id, data) {
     try {
       if (id) await updateNote(id, data)

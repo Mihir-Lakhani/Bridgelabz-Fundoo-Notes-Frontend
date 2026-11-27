@@ -7,10 +7,15 @@ export default function RemindersPage({ onAuthError }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    getNotes().then(setNotes).catch((problem) => {
-      if (problem.status === 401) onAuthError()
-      setError(problem.message)
-    }).finally(() => setLoading(false))
+    function refresh() {
+      getNotes().then((items) => { setNotes(items); setError('') }).catch((problem) => {
+        if (problem.status === 401) onAuthError()
+        setError(problem.message)
+      }).finally(() => setLoading(false))
+    }
+    refresh()
+    const timer = window.setInterval(refresh, 30000)
+    return () => window.clearInterval(timer)
   }, [onAuthError])
 
   async function remove(id) {
