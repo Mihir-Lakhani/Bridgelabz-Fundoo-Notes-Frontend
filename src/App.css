@@ -76,3 +76,5 @@ h1 { font-size: clamp(32px, 4vw, 48px); letter-spacing: -.05em; margin: 0 0 10px
 .reminder-control { margin: 8px 0 12px; font-size: 13px; color: #806628; }
 .reminder-control form { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
 .reminder-control input { min-width: 0; width: 100%; border: 1px solid #d9dde4; border-radius: 8px; padding: 7px; }
+.profile-form { max-width: 390px; margin-top: 28px; }
+.page a { color: #9a6b0b; font-weight: 700; }
