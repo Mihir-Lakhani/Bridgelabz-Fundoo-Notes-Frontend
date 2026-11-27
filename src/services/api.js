@@ -14,7 +14,9 @@ export async function api(path, options = {}) {
     let message = `Request failed (${response.status})`
     try { message = (await response.json()).error || message } catch { /* Response has no JSON body. */ }
     if (response.status === 401 && !path.startsWith('/api/auth/')) clearToken()
-    throw new Error(message)
+    const error = new Error(message)
+    error.status = response.status
+    throw error
   }
   if (response.status === 204) return null
   return response.json()
