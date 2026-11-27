@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router'
 
 const links = [
   ['Dashboard', '/dashboard'],
+  ['Reminders', '/reminders'],
   ['Archive', '/archive'],
   ['Trash', '/trash'],
   ['Labels', '/labels'],

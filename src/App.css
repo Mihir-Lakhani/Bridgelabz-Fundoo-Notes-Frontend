@@ -71,3 +71,8 @@ h1 { font-size: clamp(32px, 4vw, 48px); letter-spacing: -.05em; margin: 0 0 10px
 .label-row button:first-child { border: 0; background: transparent; color: var(--ink); font-weight: 700; }
 .label-results { margin-top: 34px; }
 .label-results h2 { font-size: 20px; }
+.reminder-line { background: #fff7e5; border-radius: 8px; padding: 7px; }
+.reminder-line button { border: 0; background: none; color: #886415; font-weight: 700; }
+.reminder-control { margin: 8px 0 12px; font-size: 13px; color: #806628; }
+.reminder-control form { display: flex; align-items: center; gap: 8px; margin-top: 7px; }
+.reminder-control input { min-width: 0; width: 100%; border: 1px solid #d9dde4; border-radius: 8px; padding: 7px; }

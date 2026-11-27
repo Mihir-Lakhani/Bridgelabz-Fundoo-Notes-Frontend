@@ -5,6 +5,7 @@ import AuthPage from './pages/AuthPage'
 import DashboardPage from './pages/DashboardPage'
 import CollectionPage from './pages/CollectionPage'
 import LabelsPage from './pages/LabelsPage'
+import RemindersPage from './pages/RemindersPage'
 import PlaceholderPage from './pages/PlaceholderPage'
 import { clearToken, getToken } from './services/api'
 import './App.css'
@@ -25,6 +26,7 @@ function App() {
       <Route path="/archive" element={workspace(<CollectionPage kind="archive" onAuthError={logout} />)} />
       <Route path="/trash" element={workspace(<CollectionPage kind="trash" onAuthError={logout} />)} />
       <Route path="/labels" element={workspace(<LabelsPage onAuthError={logout} />)} />
+      <Route path="/reminders" element={workspace(<RemindersPage onAuthError={logout} />)} />
       <Route path="/profile" element={workspace(<PlaceholderPage title="Profile" description="Your account details will appear here." />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
