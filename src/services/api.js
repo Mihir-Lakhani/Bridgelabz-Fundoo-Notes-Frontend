@@ -5,11 +5,12 @@ export function saveToken(token) { localStorage.setItem('fundoo_token', token) }
 export function clearToken() { localStorage.removeItem('fundoo_token') }
 
 export async function api(path, options = {}) {
+  const { responseType, ...requestOptions } = options
   const headers = { ...options.headers }
   if (options.body && !(options.body instanceof FormData)) headers['Content-Type'] = 'application/json'
   if (getToken()) headers.Authorization = `Bearer ${getToken()}`
 
-  const response = await fetch(`${baseUrl}${path}`, { ...options, headers })
+  const response = await fetch(`${baseUrl}${path}`, { ...requestOptions, headers })
   if (!response.ok) {
     let message = `Request failed (${response.status})`
     try { message = (await response.json()).error || message } catch { /* Response has no JSON body. */ }
@@ -18,6 +19,7 @@ export async function api(path, options = {}) {
     error.status = response.status
     throw error
   }
+  if (responseType === 'blob') return response.blob()
   const body = await response.text()
   return body ? JSON.parse(body) : null
 }

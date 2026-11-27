@@ -10,6 +10,12 @@ export const setReminder = (id, reminderAt) => api(`/api/notes/${id}/reminder`, 
   method: 'PUT', body: JSON.stringify({ reminderAt }),
 })
 export const clearReminder = (id) => api(`/api/notes/${id}/reminder`, { method: 'DELETE' })
+export const importNotes = (file) => {
+  const body = new FormData()
+  body.append('file', file)
+  return api('/api/notes/import', { method: 'POST', body })
+}
+export const exportNotes = () => api('/api/notes/export', { responseType: 'blob' })
 export const setNoteState = (id, state, enabled) => api(`/api/notes/${id}/${state}`, {
   method: 'PATCH', body: JSON.stringify({ enabled }),
 })

@@ -6,6 +6,7 @@ const links = [
   ['Archive', '/archive'],
   ['Trash', '/trash'],
   ['Labels', '/labels'],
+  ['Import / Export', '/transfer'],
   ['Profile', '/profile'],
 ]
 
