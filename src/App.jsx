@@ -8,6 +8,7 @@ import LabelsPage from './pages/LabelsPage'
 import RemindersPage from './pages/RemindersPage'
 import ProfilePage from './pages/ProfilePage'
 import AccountHelpPage from './pages/AccountHelpPage'
+import TransferPage from './pages/TransferPage'
 import { clearToken, getToken } from './services/api'
 import './App.css'
 
@@ -31,6 +32,7 @@ function App() {
       <Route path="/trash" element={workspace(<CollectionPage kind="trash" onAuthError={logout} />)} />
       <Route path="/labels" element={workspace(<LabelsPage onAuthError={logout} />)} />
       <Route path="/reminders" element={workspace(<RemindersPage onAuthError={logout} />)} />
+      <Route path="/transfer" element={workspace(<TransferPage onAuthError={logout} />)} />
       <Route path="/profile" element={workspace(<ProfilePage onAuthError={logout} />)} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
