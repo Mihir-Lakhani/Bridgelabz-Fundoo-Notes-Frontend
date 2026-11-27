@@ -19,7 +19,7 @@ export default function AuthPage({ mode, onLogin }) {
     try {
       if (isRegister) {
         await registerUser(form)
-        navigate('/login?registered=1')
+        navigate(`/verify?email=${encodeURIComponent(form.email)}&sent=1`)
       } else {
         const result = await loginUser({ email: form.email, password: form.password })
         saveToken(result.token)
@@ -38,7 +38,6 @@ export default function AuthPage({ mode, onLogin }) {
         <div className="auth-box">
           <p className="eyebrow">{isRegister ? 'START HERE' : 'WELCOME BACK'}</p>
           <h2>{isRegister ? 'Create your account' : 'Log in to your notes'}</h2>
-          {!isRegister && new URLSearchParams(location.search).has('registered') && <p className="notice success">Account created. You can log in now.</p>}
           {error && <p className="notice error" role="alert">{error}</p>}
           <form onSubmit={submit} className="stack-form">
             {isRegister && <label>Name<input name="name" value={form.name} onChange={change} required minLength="3" autoComplete="name" /></label>}
