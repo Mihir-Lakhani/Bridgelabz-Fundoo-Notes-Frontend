@@ -1,6 +1,6 @@
 # Fundoo Notes Frontend
 
-A small React application for the [Fundoo Notes backend](https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes). The projects are separate repositories. The code is on [develop](https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes-Frontend/tree/develop); `main` contains only this README.
+A small React application for the [Fundoo Notes backend](https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes-Backend). The projects are separate repositories. The code is on [develop](https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes-Frontend/tree/develop); `main` contains only this README.
 
 ## Project at a glance
 
@@ -39,8 +39,8 @@ The matching branches are named `feature/uc-01-vite-foundation` through `feature
 ```mermaid
 flowchart LR
     Browser["React in browser :5173"] -->|"fetch /api/..."| Backend["Spring Boot API :8080"]
-    Backend --> Database[(H2 database)]
-    Backend --> Mail["Email or development log"]
+    Backend --> Database[(MySQL database)]
+    Backend --> Mail["SMTP verification email"]
     Browser -->|"optional :8081"| Gateway["Spring Cloud Gateway"]
     Gateway --> Backend
 ```
@@ -68,13 +68,13 @@ The frontend sends the token in the `Authorization` header for protected calls. 
 
 ## Run both projects locally
 
-You need Node.js, npm, Java 21 or newer, and Maven. Use two terminals. The backend uses an H2 file database, so no separate database server is needed.
+You need Node.js, npm, Java 21 or newer, Maven, MySQL, and SMTP credentials for registration. Use two terminals. Create the `fundoo_notes` database and configure the backend's MySQL password and SMTP settings as described in its README.
 
 **Terminal 1 — backend**
 
 ```powershell
-git clone --branch develop https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes.git
-cd Bridgelabz-Fundoo-Notes
+git clone --branch develop https://github.com/Mihir-Lakhani/Bridgelabz-Fundoo-Notes-Backend.git
+cd Bridgelabz-Fundoo-Notes-Backend
 $env:FUNDOO_JWT_SECRET = "replace-this-with-a-random-secret-of-at-least-32-characters"
 mvn spring-boot:run
 ```
@@ -96,7 +96,7 @@ For the optional Gateway on port `8081`, copy `.env.example` to `.env.local`, ch
 
 ### Email verification and password reset
 
-Registration creates a verification token. Forgot password creates a reset token. If SMTP is not configured, the backend prints these tokens in its terminal log. Copy a token into the Verify Email or Reset Password page. These tokens expire after 15 minutes.
+Registration emails a verification link and takes you to the Verify Email page. Open the link from your inbox; the page verifies the token automatically, then you can log in. Unverified accounts cannot log in. If the link expires, use **Resend verification link** on that page. The backend returns an error if SMTP is unavailable, so check its mail settings if registration fails. Forgot password still uses a one-use reset token. Verification and reset tokens expire after 15 minutes.
 
 ### CSV format
 
@@ -120,7 +120,7 @@ CSV export downloads non-trashed notes as `notes.csv`.
 | Labels | `GET/POST/DELETE /api/labels`, note-label actions |
 | Reminders | `GET /api/notes`, `PUT/DELETE /api/notes/{id}/reminder` |
 | Profile | `GET/PUT /api/users/me` |
-| Account help | `POST /api/auth/verify`, `/forgot-password`, `/reset-password` |
+| Account help | `POST /api/auth/verify`, `/resend-verification`, `/forgot-password`, `/reset-password` |
 | Import and Export | `POST /api/notes/import`, `GET /api/notes/export` |
 
 ## Code map
@@ -142,6 +142,6 @@ npm run lint
 npm run build
 ```
 
-For the final connection check, both apps were started together. Registration, login, authenticated profile and notes, reminders, labels, CSV import/export, and the local CORS preflight succeeded against a temporary H2 database. Login, the Dashboard, Reminders, Profile, Import/Export, and logout were also checked in the browser.
+For the earlier connection check, both apps were started together. Registration, login, authenticated profile and notes, reminders, labels, CSV import/export, and the local CORS preflight succeeded against a temporary H2 database. The new email verification flow is covered by backend tests; real SMTP delivery requires your local mail credentials.
 
 The frontend uses components, props, state, effects, forms, conditional rendering, React Router, `fetch`, and plain CSS. It has no state library, UI framework, or form library. Redis, RabbitMQ, Spring Batch, AOP, and scheduled jobs live in the backend.
