@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
 import NoteCard from '../components/NoteCard'
 import NoteEditor from '../components/NoteEditor'
+import { addLabelToNote, getLabels, removeLabelFromNote } from '../services/labelService'
 import { createNote, getNotes, setNoteState, trashNote, updateNote } from '../services/noteService'
 
 export default function DashboardPage({ onAuthError }) {
   const [notes, setNotes] = useState([])
+  const [labels, setLabels] = useState([])
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -18,7 +20,10 @@ export default function DashboardPage({ onAuthError }) {
   }
 
   useEffect(() => {
-    getNotes().then(setNotes).catch((problem) => {
+    Promise.all([getNotes(), getLabels()]).then(([items, availableLabels]) => {
+      setNotes(items)
+      setLabels(availableLabels)
+    }).catch((problem) => {
       if (problem.status === 401) onAuthError()
       setError(problem.message)
     }).finally(() => setLoading(false))
@@ -44,6 +49,18 @@ export default function DashboardPage({ onAuthError }) {
     catch (problem) { setError(problem.message) }
   }
 
+  async function addLabel(noteId, labelId) {
+    try { await addLabelToNote(noteId, labelId); await load() }
+    catch (problem) { setError(problem.message) }
+  }
+
+  async function removeLabel(noteId, name) {
+    const label = labels.find((item) => item.name === name)
+    if (!label) return
+    try { await removeLabelFromNote(noteId, label.id); await load() }
+    catch (problem) { setError(problem.message) }
+  }
+
   async function submitSearch(event) {
     event.preventDefault()
     setActiveSearch(search.trim())
@@ -59,7 +76,7 @@ export default function DashboardPage({ onAuthError }) {
       {error && <p className="notice error" role="alert">{error}</p>}
       <NoteEditor key={editing?.id || 'new'} note={editing} onSave={save} onCancel={() => setEditing(null)} />
       <form className="search-row" onSubmit={submitSearch}><input aria-label="Search notes" placeholder="Search notes by title or description" value={search} onChange={(event) => setSearch(event.target.value)} /><button className="button">Search</button></form>
-      {loading ? <p className="muted">Loading notes...</p> : visibleNotes.length === 0 ? <div className="empty-state"><strong>No notes found</strong><p>Try a different search or add a new note.</p></div> : <div className="note-grid">{visibleNotes.map((note) => <NoteCard key={note.id} note={note} onEdit={setEditing} onTrash={remove} onPin={(item) => changeState(item.id, 'pin', !item.pinned)} onArchive={(item) => changeState(item.id, 'archive', true)} />)}</div>}
+      {loading ? <p className="muted">Loading notes...</p> : visibleNotes.length === 0 ? <div className="empty-state"><strong>No notes found</strong><p>Try a different search or add a new note.</p></div> : <div className="note-grid">{visibleNotes.map((note) => <NoteCard key={note.id} note={note} labels={labels} onEdit={setEditing} onTrash={remove} onPin={(item) => changeState(item.id, 'pin', !item.pinned)} onArchive={(item) => changeState(item.id, 'archive', true)} onAddLabel={addLabel} onRemoveLabel={removeLabel} />)}</div>}
     </section>
   )
 }
