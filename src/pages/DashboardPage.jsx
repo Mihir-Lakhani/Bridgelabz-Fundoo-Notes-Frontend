@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import NoteCard from '../components/NoteCard'
 import NoteEditor from '../components/NoteEditor'
 import { addLabelToNote, getLabels, removeLabelFromNote } from '../services/labelService'
-import { createNote, getNotes, setNoteState, trashNote, updateNote } from '../services/noteService'
+import { clearReminder, createNote, getNotes, setNoteState, setReminder, trashNote, updateNote } from '../services/noteService'
 
 export default function DashboardPage({ onAuthError }) {
   const [notes, setNotes] = useState([])
@@ -61,6 +61,16 @@ export default function DashboardPage({ onAuthError }) {
     catch (problem) { setError(problem.message) }
   }
 
+  async function changeReminder(id, value) {
+    try { await setReminder(id, value); await load() }
+    catch (problem) { setError(problem.message) }
+  }
+
+  async function removeReminder(id) {
+    try { await clearReminder(id); await load() }
+    catch (problem) { setError(problem.message) }
+  }
+
   async function submitSearch(event) {
     event.preventDefault()
     setActiveSearch(search.trim())
@@ -76,7 +86,7 @@ export default function DashboardPage({ onAuthError }) {
       {error && <p className="notice error" role="alert">{error}</p>}
       <NoteEditor key={editing?.id || 'new'} note={editing} onSave={save} onCancel={() => setEditing(null)} />
       <form className="search-row" onSubmit={submitSearch}><input aria-label="Search notes" placeholder="Search notes by title or description" value={search} onChange={(event) => setSearch(event.target.value)} /><button className="button">Search</button></form>
-      {loading ? <p className="muted">Loading notes...</p> : visibleNotes.length === 0 ? <div className="empty-state"><strong>No notes found</strong><p>Try a different search or add a new note.</p></div> : <div className="note-grid">{visibleNotes.map((note) => <NoteCard key={note.id} note={note} labels={labels} onEdit={setEditing} onTrash={remove} onPin={(item) => changeState(item.id, 'pin', !item.pinned)} onArchive={(item) => changeState(item.id, 'archive', true)} onAddLabel={addLabel} onRemoveLabel={removeLabel} />)}</div>}
+      {loading ? <p className="muted">Loading notes...</p> : visibleNotes.length === 0 ? <div className="empty-state"><strong>No notes found</strong><p>Try a different search or add a new note.</p></div> : <div className="note-grid">{visibleNotes.map((note) => <NoteCard key={note.id} note={note} labels={labels} onEdit={setEditing} onTrash={remove} onPin={(item) => changeState(item.id, 'pin', !item.pinned)} onArchive={(item) => changeState(item.id, 'archive', true)} onAddLabel={addLabel} onRemoveLabel={removeLabel} onReminder={changeReminder} onClearReminder={removeReminder} />)}</div>}
     </section>
   )
 }
