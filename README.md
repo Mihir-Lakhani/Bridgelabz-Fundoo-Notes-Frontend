@@ -27,7 +27,7 @@ Each UC has its own `feature/uc-*` branch from `develop` and a non-fast-forward 
 | 05 | Search and actions | Search, pin, and archive notes |
 | 06 | Archive and Trash | Unarchive, restore, and permanently delete |
 | 07 | Labels | Create labels and attach them to notes |
-| 08 | Reminders | Set, view, and remove note reminders |
+| 08 | Reminders | Set and remove reminders; sent reminders disappear after delivery |
 | 09 | Account management | Update profile, verify email, and reset password |
 | 10 | CSV transfer | Import and export notes as CSV |
 | 11 | Finalization | Document setup and check the frontend/backend connection |
@@ -65,6 +65,8 @@ sequenceDiagram
 ```
 
 The frontend sends the token in the `Authorization` header for protected calls. The backend validates it and checks data ownership. A `401` response sends the user back to login. The token is stored in `localStorage` for this training project.
+
+After the backend successfully emails a due reminder, it clears that reminder from the note. The open Dashboard and Reminders pages refresh their note lists every 30 seconds, so the reminder disappears without reloading the browser.
 
 ## Run both projects locally
 
