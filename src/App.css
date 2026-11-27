@@ -1,0 +1,7 @@
+.welcome { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 32px; }
+.brand-mark { width: 62px; height: 62px; border-radius: 18px; background: #efb43d; display: grid; place-items: center; font-size: 35px; font-weight: 800; color: #402e0d; box-shadow: 0 12px 30px #efb43d50; }
+.eyebrow { margin: 32px 0 8px; font-size: 12px; letter-spacing: .2em; font-weight: 700; color: #93732d; }
+.welcome h1 { font-size: clamp(48px, 8vw, 82px); letter-spacing: -.06em; margin: 0; }
+.welcome-copy { color: #687280; font-size: 19px; }
+.welcome-features { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 28px; }
+.welcome-features span { background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; padding: 10px 16px; color: #556070; }
