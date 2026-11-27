@@ -8,12 +8,12 @@ const links = [
   ['Profile', '/profile'],
 ]
 
-export default function AppShell({ children }) {
+export default function AppShell({ children, onLogout }) {
   return (
     <div className="app-shell">
       <header className="topbar">
         <Link className="brand" to="/dashboard"><span className="small-mark">F</span> Fundoo Notes</Link>
-        <nav className="top-links"><Link to="/login">Log in</Link><Link className="button" to="/register">Get started</Link></nav>
+        <nav className="top-links"><button className="text-button" onClick={onLogout}>Log out</button></nav>
       </header>
       <div className="shell-body">
         <aside className="sidebar">
