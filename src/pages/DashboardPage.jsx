@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react'
 import NoteCard from '../components/NoteCard'
 import NoteEditor from '../components/NoteEditor'
-import { createNote, getNotes, trashNote, updateNote } from '../services/noteService'
+import { createNote, getNotes, setNoteState, trashNote, updateNote } from '../services/noteService'
 
 export default function DashboardPage({ onAuthError }) {
   const [notes, setNotes] = useState([])
   const [editing, setEditing] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [search, setSearch] = useState('')
+  const [activeSearch, setActiveSearch] = useState('')
 
   async function load() {
-    try { setNotes(await getNotes()); setError('') }
+    try { setNotes(await getNotes(activeSearch)); setError('') }
     catch (problem) { if (problem.status === 401) onAuthError(); setError(problem.message) }
     finally { setLoading(false) }
   }
@@ -37,12 +39,27 @@ export default function DashboardPage({ onAuthError }) {
     catch (problem) { setError(problem.message) }
   }
 
+  async function changeState(id, state, enabled) {
+    try { await setNoteState(id, state, enabled); await load() }
+    catch (problem) { setError(problem.message) }
+  }
+
+  async function submitSearch(event) {
+    event.preventDefault()
+    setActiveSearch(search.trim())
+    try { setNotes(await getNotes(search.trim())); setError('') }
+    catch (problem) { setError(problem.message) }
+  }
+
+  const visibleNotes = notes.filter((note) => !note.archived)
+
   return (
     <section className="page">
-      <div className="page-heading"><div><p className="eyebrow">YOUR WORKSPACE</p><h1>Your notes</h1><p className="muted">Capture ideas and keep moving.</p></div><span className="count-pill">{notes.length} notes</span></div>
+      <div className="page-heading"><div><p className="eyebrow">YOUR WORKSPACE</p><h1>Your notes</h1><p className="muted">Capture ideas and keep moving.</p></div><span className="count-pill">{visibleNotes.length} notes</span></div>
       {error && <p className="notice error" role="alert">{error}</p>}
       <NoteEditor key={editing?.id || 'new'} note={editing} onSave={save} onCancel={() => setEditing(null)} />
-      {loading ? <p className="muted">Loading notes...</p> : notes.length === 0 ? <div className="empty-state"><strong>No notes yet</strong><p>Your first idea starts above.</p></div> : <div className="note-grid">{notes.map((note) => <NoteCard key={note.id} note={note} onEdit={setEditing} onTrash={remove} />)}</div>}
+      <form className="search-row" onSubmit={submitSearch}><input aria-label="Search notes" placeholder="Search notes by title or description" value={search} onChange={(event) => setSearch(event.target.value)} /><button className="button">Search</button></form>
+      {loading ? <p className="muted">Loading notes...</p> : visibleNotes.length === 0 ? <div className="empty-state"><strong>No notes found</strong><p>Try a different search or add a new note.</p></div> : <div className="note-grid">{visibleNotes.map((note) => <NoteCard key={note.id} note={note} onEdit={setEditing} onTrash={remove} onPin={(item) => changeState(item.id, 'pin', !item.pinned)} onArchive={(item) => changeState(item.id, 'archive', true)} />)}</div>}
     </section>
   )
 }
